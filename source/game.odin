@@ -1,4 +1,6 @@
-// This example is based on https://github.com/floooh/sokol-odin/tree/main/examples/texcube
+// This program draws a cube with a texture on the sides.
+//
+// Based on https://github.com/floooh/sokol-odin/tree/main/examples/texcube
 package game
 
 import "base:runtime"

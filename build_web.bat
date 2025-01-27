@@ -13,6 +13,8 @@ if not exist %OUT_DIR% mkdir %OUT_DIR%
 set EMSDK_QUIET=1
 call %EMSCRIPTEN_SDK_DIR%\emsdk_env.bat
 
+:: This builds our game code, note that it uses obj build mode: No linking
+:: happens. The required libs to link are fed into `emcc` below.
 odin build source -target:js_wasm32 -build-mode:obj -vet -strict-style -out:%OUT_DIR%\game -debug
 IF %ERRORLEVEL% NEQ 0 exit /b 1
 
@@ -35,6 +37,7 @@ set flags=-sWASM_BIGINT -sWARN_ON_UNDEFINED_SYMBOLS=0 -sMAX_WEBGL_VERSION=2 -sAS
 cmd /c emcc -g -o %OUT_DIR%\index.html %files% %flags%
 IF %ERRORLEVEL% NEQ 0 exit /b 1
 
+:: Baked into `index.wasm` by `emcc`, so can be removed.
 del %OUT_DIR%\game.wasm.o 
 
 echo Web build created in %OUT_DIR%
