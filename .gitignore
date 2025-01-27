@@ -4,6 +4,7 @@ build/
 *.dll
 *.exe
 *.lib
+*.so
 *.a
 *.sublime-workspace
 *.exp

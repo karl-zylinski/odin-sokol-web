@@ -1,6 +1,6 @@
 @echo off
 
-sokol-shdc\win32\sokol-shdc -i source/shader.glsl -o source/shader.odin -l glsl300es:hlsl4 -f sokol_odin
+sokol-shdc\win32\sokol-shdc -i source/shader.glsl -o source/shader.odin -l glsl300es:hlsl4:glsl430 -f sokol_odin
 IF %ERRORLEVEL% NEQ 0 exit /b 1
 
 :: Point this to where you installed emscripten.
@@ -30,7 +30,7 @@ set files=%OUT_DIR%\game.wasm.o source\sokol\app\sokol_app_wasm_gl_release.a sou
 
 :: index_template.html contains the javascript code that calls the procedures in
 :: source/main_web/main_web.odin
-set flags=-sUSE_GLFW=3 -sEXPORTED_RUNTIME_METHODS=ccall -sDEFAULT_LIBRARY_FUNCS_TO_INCLUDE='$addFunction' -sALLOW_TABLE_GROWTH -sWASM_BIGINT -sMAX_WEBGL_VERSION=2 -sWARN_ON_UNDEFINED_SYMBOLS=0 -sASSERTIONS --shell-file source\web\index_template.html --preload-file assets
+set flags=-sWASM_BIGINT -sWARN_ON_UNDEFINED_SYMBOLS=0 -sMAX_WEBGL_VERSION=2 -sASSERTIONS --shell-file source\web\index_template.html --preload-file assets
 
 :: For debugging: Add `-g` to `emcc` (gives better error callstack in chrome)
 ::
