@@ -27,7 +27,7 @@ There is also a `build_desktop.bat/sh` that makes a desktop version of your prog
 
 ## How does the web build work?
 
-1. The contents of `source` is compiled with Odin compiler using `js_wasm32` target. It is compiled in `obj` build mode. This means that no libraries are linked.
+1. The contents of `source` is compiled with Odin compiler using `js_wasm32` target. It is compiled in `obj` build mode. This means that no libraries are linked. That instead happens in step (3).
 2. The `odin.js` environment is copied from `<odin>/core/sys/wasm/js/odin.js` to `build/web`
 3. The emscripten compiler is run. It is fed the output of our Odin compilation as well as the Sokol library files. It is also fed a template HTML file that is used as basis for the final `index.html` file. The resulting WASM files and are written to `build/web`
 
