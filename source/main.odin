@@ -199,6 +199,8 @@ frame :: proc "c" () {
 
 	sg.end_pass()
 	sg.commit()
+
+	free_all(context.temp_allocator)
 }
 
 cleanup :: proc "c" () {
