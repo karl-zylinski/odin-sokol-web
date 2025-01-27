@@ -1,4 +1,5 @@
 @echo off
+
 echo Building shaders...
 sokol-shdc\win32\sokol-shdc -i source/shader.glsl -o source/shader.odin -l glsl300es:hlsl4:glsl430 -f sokol_odin
 IF %ERRORLEVEL% NEQ 0 exit /b 1

@@ -4,15 +4,6 @@
 		{
 			"path": ".",
 		},
-		{
-			"path": "C:\\SDK\\Odin\\base"
-		},
-		{
-			"path": "C:\\SDK\\Odin\\core"
-		},
-		{
-			"path": "C:\\SDK\\Odin\\vendor"
-		},
 	],
 	"build_systems":
 	[
