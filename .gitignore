@@ -8,3 +8,4 @@ build/
 *.sublime-workspace
 *.exp
 !sokol-shdc/**
+!source/sokol/*/*wasm*.a

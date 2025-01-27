@@ -56,7 +56,7 @@ main :: proc() {
 		width = 1280,
 		height = 720,
 		sample_count = 4,
-		window_title = "Odin + sokol on the web",
+		window_title = IS_WEB ? "Odin + Sokol on the web" : "Odin + Sokol",
 		icon = { sokol_default = true },
 		logger = { func = slog.func },
 		html5_update_document_title = true,
