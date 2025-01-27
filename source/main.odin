@@ -1,7 +1,7 @@
 // This program draws a cube with a texture on the sides.
 //
 // Based on https://github.com/floooh/sokol-odin/tree/main/examples/texcube
-package game
+package main
 
 import "base:runtime"
 import "core:image/png"

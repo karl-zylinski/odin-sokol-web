@@ -4,7 +4,7 @@
 //  NOTE: This source file also uses the '#pragma sokol' form of the
 //  custom tags.
 //------------------------------------------------------------------------------
-@header package game
+@header package main
 @header import sg "sokol/gfx"
 @ctype mat4 Mat4
 

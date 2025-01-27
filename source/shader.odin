@@ -1,4 +1,4 @@
-package game
+package main
 import sg "sokol/gfx"
 /*
     #version:1# (machine generated, don't edit!)
