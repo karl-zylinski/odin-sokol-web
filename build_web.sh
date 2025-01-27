@@ -47,6 +47,7 @@ flags="-sWASM_BIGINT -sWARN_ON_UNDEFINED_SYMBOLS=0 -sMAX_WEBGL_VERSION=2 -sASSER
 # For debugging: Add `-g` to `emcc` (gives better error callstack in chrome)
 emcc -o $OUT_DIR/index.html $files $flags
 
+# Baked into `index.wasm` by `emcc`, so can be removed.
 rm $OUT_DIR/game.wasm.o
 
 echo "Web build created in ${OUT_DIR}"
