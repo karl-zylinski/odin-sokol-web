@@ -33,10 +33,33 @@
 			image-rendering: pixelated;
 			-ms-interpolation-mode: nearest-neighbor;
 		}
+		.heading {
+			position: absolute;
+			top: 10px;
+			left: 10px;
+			color: #fff1e4;
+			text-decoration: none;
+			z-index: 1;
+			font-family: "Arial", sans-serif;
+			font-size: 24px;
+			font-weight: bold;
+		}
+		.heading span {
+			display: inline-block;
+			margin-right: 24px;
+		}
+		.heading a {
+			color: #0d528f;
+		}
 	</style>
 </head>
 <body>
 	<canvas class="game_canvas" id="canvas" oncontextmenu="event.preventDefault()" tabindex="-1"></canvas>
+
+	<div class="heading">
+		<span>Odin + Sokol on the web</span>
+		<span><a href="https://github.com/karl-zylinski/odin-sokol-web">Source</a></span>
+	</div>
 	<script type="text/javascript" src="odin.js"></script>
 	<script>
 		var odinMemoryInterface = new odin.WasmMemoryInterface();

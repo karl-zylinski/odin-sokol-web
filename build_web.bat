@@ -1,6 +1,7 @@
 @echo off
 
-sokol-shdc -i source/shader.glsl -o source/shader.odin -l glsl300es:hlsl4 -f sokol_odin
+sokol-shdc\win32\sokol-shdc -i source/shader.glsl -o source/shader.odin -l glsl300es:hlsl4 -f sokol_odin
+IF %ERRORLEVEL% NEQ 0 exit /b 1
 
 :: Point this to where you installed emscripten.
 set EMSCRIPTEN_SDK_DIR=c:\SDK\emsdk
