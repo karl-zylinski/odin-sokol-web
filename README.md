@@ -12,7 +12,7 @@ This assumes you have a recent Odin compiler installed.
 
 1. [Install emscripten](https://emscripten.org/docs/getting_started/downloads.html#installation-instructions-using-the-emsdk-recommended)
 2. Clone this repository
-3. Run `build_web.bat` or `build_web.sh` depending on platform (open the scripts and modify the path to emscripten)
+3. Run `build_web.bat` or `build_web.sh` depending on platform (you may need to open the script and modify the path to emscripten)
 
 Web build is in `build/web`
 
