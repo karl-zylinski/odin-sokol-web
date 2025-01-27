@@ -2,7 +2,7 @@
 
 ![image](https://github.com/user-attachments/assets/af9c11e3-c724-4107-9af4-9f2ac469b88b)
 
-Make games using [Odin](https://odin-lang.org/) + [Sokol](https://github.com/floooh/sokol) that work on the web!
+Make programs using [Odin](https://odin-lang.org/) + [Sokol](https://github.com/floooh/sokol) that work on the web!
 
 Live example: https://zylinski.se/odin-sokol-web/
 
