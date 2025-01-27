@@ -1,0 +1,62 @@
+{
+	"folders":
+	[
+		{
+			"path": ".",
+		},
+		{
+			"path": "C:\\SDK\\Odin\\base"
+		},
+		{
+			"path": "C:\\SDK\\Odin\\core"
+		},
+		{
+			"path": "C:\\SDK\\Odin\\vendor"
+		},
+	],
+	"build_systems":
+	[
+		{
+			"file_regex": "^(.+)\\(([0-9]+):([0-9]+)\\) (.+)$",
+			"name": "Odin + Raylib on the web",
+			"working_dir": "$project_path",
+
+			"windows": {
+				"cmd": "build_web.bat",
+			},
+			"linux": {
+				"cmd": "./build_web.sh",
+			},
+			"osx": {
+				"cmd": "./build_web.sh",
+			},
+
+			"variants": [
+				{
+					"name": "desktop + run",
+					"windows": {
+						"cmd": "build_desktop.bat && build\\desktop\\game_desktop.exe",
+					},
+					"linux": {
+						"shell_cmd": "./build_desktop.sh && build/desktop/game_desktop.bin",
+					},
+					"osx": {
+						"shell_cmd": "./build_desktop.sh && build/desktop/game_desktop.bin",
+					},
+					
+				},
+			],
+		}
+	],
+	"settings":
+	{
+		"auto_complete": false,
+		"LSP":
+		{
+			"odin":
+			{
+				"enabled": true,
+			},
+		},
+	},
+}

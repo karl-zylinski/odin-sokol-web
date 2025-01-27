@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en-us">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+	<title>Odin + sokol on the web</title>
+	<meta name="title" content="Odin + sokol on the web">
+	<meta name="description" content="Make games using Odin + sokol that work in the browser">
+	<meta name="viewport" content="width=device-width">
+
+	<style>
+		body { 
+			margin: 0;
+			background-color: black;
+		}
+		canvas.game_canvas {
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			margin: 0px;
+			border: 0;
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+			display: block;
+			image-rendering: optimizeSpeed;
+			image-rendering: -moz-crisp-edges;
+			image-rendering: -o-crisp-edges;
+			image-rendering: -webkit-optimize-contrast;
+			image-rendering: optimize-contrast;
+			image-rendering: crisp-edges;
+			image-rendering: pixelated;
+			-ms-interpolation-mode: nearest-neighbor;
+		}
+	</style>
+</head>
+<body>
+	<canvas class="game_canvas" id="canvas" oncontextmenu="event.preventDefault()" tabindex="-1"></canvas>
+	<script type="text/javascript" src="odin.js"></script>
+	<script>
+		var odinMemoryInterface = new odin.WasmMemoryInterface();
+
+		// `4` for `js_wasm32` target, `8` for `js_wasm64p32` target.
+		odinMemoryInterface.setIntSize(4);
+		var odinImports = odin.setupDefaultImports(odinMemoryInterface);
+
+		// The Module is used as configuration for emscripten.
+		var Module = {
+			// This is called by emscripten when it starts up.
+			instantiateWasm: (imports, successCallback) => {
+				const newImports = {
+					...odinImports,
+					...imports
+				}
+
+				// This will load the WASM file with the game inside. It will
+				// use both the emscripten and odin.js imports. This makes it
+				// possible to use the `js` "OS" in our Odin code.
+				return WebAssembly.instantiateStreaming(fetch("index.wasm"), newImports).then(function(output) {
+					var e = output.instance.exports
+					odinMemoryInterface.setExports(e)
+					odinMemoryInterface.setMemory(e.memory)
+					successCallback(output.instance);
+
+					// This calls all procedures tagged with `@init` and then
+					// it calls the `main` proc. Any procs marked with `@fini`
+					// are called when sokol shuts down.
+					e._start()
+
+					return output.instance.exports;
+				});
+			},
+			print: (function() {
+				var element = document.getElementById("output");
+				if (element) element.value = ''; // clear browser cache
+				return function(text) {
+					if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+					console.log(text);
+					if (element) {
+					  element.value += text + "\n";
+					  element.scrollTop = element.scrollHeight; // focus on bottom
+					}
+				};
+			})(),
+			canvas: (function() {
+				return document.getElementById("canvas");
+			})()
+		};
+	</script>
+
+	<!-- Emscripten injects its javascript here -->
+	{{{ SCRIPT }}}
+</body>
+</html>
