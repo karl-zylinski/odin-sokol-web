@@ -25,7 +25,7 @@ for /f %%i in ('odin root') do set "ODIN_PATH=%%i"
 
 copy %ODIN_PATH%\core\sys\wasm\js\odin.js %OUT_DIR%
 
-set files=%OUT_DIR%\game.wasm.o source\sokol\app\sokol_app_wasm_gl_debug.a source\sokol\glue\sokol_glue_wasm_gl_debug.a source\sokol\gfx\sokol_gfx_wasm_gl_debug.a source\sokol\shape\sokol_shape_wasm_gl_debug.a source\sokol\log\sokol_log_wasm_gl_debug.a source\sokol\gl\sokol_gl_wasm_gl_debug.a %ODIN_PATH%/vendor/stb/lib/stb_image_wasm.o
+set files=%OUT_DIR%\game.wasm.o source\sokol\app\sokol_app_wasm_gl_release.a source\sokol\glue\sokol_glue_wasm_gl_release.a source\sokol\gfx\sokol_gfx_wasm_gl_release.a source\sokol\shape\sokol_shape_wasm_gl_release.a source\sokol\log\sokol_log_wasm_gl_release.a source\sokol\gl\sokol_gl_wasm_gl_release.a
 
 :: index_template.html contains the javascript code that calls the procedures in
 :: source/main_web/main_web.odin
@@ -36,6 +36,7 @@ set flags=-sUSE_GLFW=3 -sEXPORTED_RUNTIME_METHODS=ccall -sDEFAULT_LIBRARY_FUNCS_
 :: This uses `cmd /c` to avoid emcc stealing the whole command prompt. Otherwise
 :: it does not run the lines that follow it.
 cmd /c emcc -g -o %OUT_DIR%\index.html %files% %flags%
+IF %ERRORLEVEL% NEQ 0 exit /b 1
 
 del %OUT_DIR%\game.wasm.o 
 

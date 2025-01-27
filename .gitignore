@@ -3,6 +3,8 @@ build/
 *.obj
 *.dll
 *.exe
+*.lib
+*.a
 *.sublime-workspace
 *.exp
 !sokol-shdc/**
