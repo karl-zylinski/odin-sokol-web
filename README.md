@@ -37,3 +37,8 @@ Open the resulting `build/web/index.html`, to see how it starts up the `main` pr
 
 - Any C library you use in the Odin code needs to be manually linked into `emcc`.
 - If you get compile errors related to `vendor:libc` when using any WASM library, then you'll need to remove the `import "vendor:libc"` line from that library. Some libraries, such as `vendor:box2d` and `vendor:stb/image` use `vendor:libc` to remove the need for emscripten. However, this breaks those libs when used in combination with emscripten.
+
+## Updating Sokol
+
+- Replace the contents of folder `source/sokol` with this: https://github.com/floooh/sokol-odin/tree/main/sokol -- Afterwards, run the scripts inside the `source/sokol` folder to compile the libs.
+- Replace the contents of folder `sokol-shdc` with this: https://github.com/floooh/sokol-tools-bin/tree/master/bin
