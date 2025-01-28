@@ -81,18 +81,21 @@
 				// use both the emscripten and odin.js imports. This makes it
 				// possible to use the `js` "OS" in our Odin code.
 				return WebAssembly.instantiateStreaming(fetch("index.wasm"), newImports).then(function(output) {
-					var e = output.instance.exports
-					odinMemoryInterface.setExports(e)
-					odinMemoryInterface.setMemory(e.memory)
-					successCallback(output.instance);
-
-					// This calls all procedures tagged with `@init` and then
-					// it calls the `main` proc. Any procs marked with `@fini`
-					// are called when sokol shuts down.
-					e._start()
-
-					return output.instance.exports;
+					odinMemoryInterface.setExports(output.instance.exports)
+					odinMemoryInterface.setMemory(output.instance.exports.memory)
+					return successCallback(output.instance);
 				});
+			},
+			// This happens a bit after `instantiateWasm`, when everything is
+			// done setting up. At that point we can run code.
+			onRuntimeInitialized: () => {
+				// This calls all procedures tagged with `@init` and then
+				// it calls the `main` proc (see `source/main.odin`). Any procs
+				// marked with `@fini` are called when sokol shuts down.
+				//
+				// `wasmExports` is same thing as `output.instance.exports` in
+				// `instantiateWasm`
+				wasmExports._start()
 			},
 			print: (function() {
 				var element = document.getElementById("output");
