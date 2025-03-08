@@ -6,6 +6,9 @@ Make programs using [Odin](https://odin-lang.org/) + [Sokol](https://github.com/
 
 Live example: https://zylinski.se/odin-sokol-web/
 
+> [!WARNING]
+> There's a bug in Odin right now that breaks the web build. As a temporary workaround, change `game.wasm.o` to `gamegame.wasm.o` in the build script.
+
 ## Getting started
 
 This assumes you have a recent Odin compiler installed.
