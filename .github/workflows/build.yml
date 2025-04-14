@@ -1,0 +1,69 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+
+jobs:
+  build_linux:
+    name: Linux
+    runs-on: ubuntu-latest
+    steps:
+      - uses: laytan/setup-odin@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - uses: mymindstorm/setup-emsdk@v14
+      
+      - uses: actions/checkout@v4
+      
+      - name: Build desktop
+        run: ./build_desktop.sh
+
+      - name: Build web
+        run: ./build_web.sh
+
+  build_macos:
+    name: MacOS
+    strategy:
+      matrix:
+        os: [macos-13, macos-15]
+    runs-on: ${{matrix.os}}
+    steps:
+      - uses: laytan/setup-odin@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - uses: mymindstorm/setup-emsdk@v14
+
+      - uses: actions/checkout@v4
+
+      - name: Build desktop
+        run: ./build_desktop.sh
+
+      - name: Build web
+        run: ./build_web.sh
+
+  build_windows:
+    name: Windows
+    runs-on: windows-latest
+    steps:
+      - uses: laytan/setup-odin@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: mymindstorm/setup-emsdk@v14
+
+      - uses: actions/checkout@v4
+      - uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Build desktop
+        run: .\build_desktop.bat
+
+      - name: Build web
+        run: .\build_web.bat
