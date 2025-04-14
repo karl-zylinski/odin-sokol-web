@@ -24,8 +24,9 @@ jobs:
      
       - name: Build Sokol libs
         working-directory: ./source/sokol
-        run: ./build_clibs_linux.sh
-        run: ./build_clibs_wasm.sh
+        run: |
+          ./build_clibs_linux.sh
+          ./build_clibs_wasm.sh
 
       - name: Build desktop
         run: ./build_desktop.sh
@@ -50,9 +51,10 @@ jobs:
 
       - name: Build Sokol libs
         working-directory: ./source/sokol
-        run: ./build_clibs_macos.sh
-        run: ./build_clibs_macos_dylib.sh
-        run: ./build_clibs_wasm.sh
+        run: |
+          ./build_clibs_macos.sh
+          ./build_clibs_macos_dylib.sh
+          ./build_clibs_wasm.sh
 
       - name: Build desktop
         run: ./build_desktop.sh
@@ -75,8 +77,9 @@ jobs:
 
       - name: Build Sokol libs
         working-directory: .\source\sokol
-        run: .\build_clibs_windows.cmd
-        run: .\build_clibs_wasm.bat
+        run: |
+          .\build_clibs_windows.cmd
+          .\build_clibs_wasm.bat
 
       - name: Build desktop
         run: .\build_desktop.bat
