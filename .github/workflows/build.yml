@@ -21,6 +21,11 @@ jobs:
       - uses: mymindstorm/setup-emsdk@v14
       
       - uses: actions/checkout@v4
+
+      - uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: libglu1-mesa-dev mesa-common-dev xorg-dev libasound2-dev
+          version: 1.2
      
       - name: Build Sokol libs
         working-directory: ./source/sokol
