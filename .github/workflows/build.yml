@@ -21,7 +21,12 @@ jobs:
       - uses: mymindstorm/setup-emsdk@v14
       
       - uses: actions/checkout@v4
-      
+     
+      - name: Build Sokol libs
+        working-directory: ./source/sokol
+        run: ./build_clibs_linux.sh
+        run: ./build_clibs_wasm.sh
+
       - name: Build desktop
         run: ./build_desktop.sh
 
@@ -43,6 +48,12 @@ jobs:
 
       - uses: actions/checkout@v4
 
+      - name: Build Sokol libs
+        working-directory: ./source/sokol
+        run: ./build_clibs_macos.sh
+        run: ./build_clibs_macos_dylib.sh
+        run: ./build_clibs_wasm.sh
+
       - name: Build desktop
         run: ./build_desktop.sh
 
@@ -61,6 +72,11 @@ jobs:
 
       - uses: actions/checkout@v4
       - uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Build Sokol libs
+        working-directory: .\source\sokol
+        run: .\build_clibs_windows.cmd
+        run: .\build_clibs_wasm.bat
 
       - name: Build desktop
         run: .\build_desktop.bat
