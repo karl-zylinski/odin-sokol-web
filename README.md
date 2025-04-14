@@ -6,9 +6,6 @@ Make programs using [Odin](https://odin-lang.org/) + [Sokol](https://github.com/
 
 Live example: https://zylinski.se/odin-sokol-web/
 
-> [!WARNING]
-> There's a bug in Odin right now that breaks the web build. As a temporary workaround, change `game.wasm.o` to `gamegame.wasm.o` in the build script.
-
 ## Getting started
 
 This assumes you have a recent Odin compiler installed.
@@ -45,3 +42,38 @@ Open the resulting `build/web/index.html`, to see how it starts up the `main` pr
 
 - Replace the contents of folder `source/sokol` with this: https://github.com/floooh/sokol-odin/tree/main/sokol -- Afterwards, run the scripts inside the `source/sokol` folder to compile the libs.
 - Replace the contents of folder `sokol-shdc` with this: https://github.com/floooh/sokol-tools-bin/tree/master/bin
+
+## Troubleshooting
+
+### I get `panic: wasm_allocator: initial memory could not be allocated`
+
+You probably have a global variable that allocates dynamic memory. Move that allocation into the game's `init` or `main` proc. This could also happen if initialize dynamic arrays or maps in the global file scope, like so:
+
+```
+arr := [dynamic]int { 2, 3, 4 }
+```
+
+In that case you can declare it and do the initialization in the `init` proc instead:
+
+```
+arr: [dynamic]int
+
+main :: proc() {
+  arr = { 2, 3, 4 }
+
+  // bla bla
+}
+```
+
+This happens because the context hasn't been initialized with the correct allocator yet.
+
+### I get `RuntimeError: memory access out of bounds`
+
+Try modifying the `build_web` script and add these flags where it runs `emcc`:
+```
+-sALLOW_MEMORY_GROWTH=1 -sINITIAL_HEAP=16777216 -sSTACK_SIZE=65536
+```
+The numbers above are the default values, try bigger ones and see if it helps.
+
+### Error: `emcc: error: build\web\index.data --from-emcc --preload assets' failed (returned 1)`
+You might be missing the `assets` folder. It must have at least a single file inside it. You can also remove the `--preload assets` from the build script.
