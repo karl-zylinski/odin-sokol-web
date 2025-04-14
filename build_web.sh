@@ -6,12 +6,12 @@ SHDC_ARCH=""
 
 UNAME=$(uname -ma)
 
-case UNAME in 
+case $UNAME in 
 "Darwin")
 	SHDC_PLATFORM = "osx" ;;
 esac
 
-case UNAME in
+case $UNAME in
 "arm64")
 	SHDC_ARCH = "_arm64" ;;
 esac
