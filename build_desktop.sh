@@ -7,6 +7,8 @@ SHDC_ARCH=""
 
 UNAME=$(uname -ma)
 
+echo $UNAME
+
 case UNAME in 
 "Darwin")
 	SHDC_PLATFORM = "osx" ;;
