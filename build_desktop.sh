@@ -7,14 +7,14 @@ SHDC_ARCH=""
 
 UNAME=$(uname -ma)
 
-case $UNAME in 
-"Darwin")
-	SHDC_PLATFORM = "osx" ;;
+case "${UNAME}" in 
+Darwin*)
+	SHDC_PLATFORM="osx" ;;
 esac
 
-case $UNAME in
-"arm64")
-	SHDC_ARCH = "_arm64" ;;
+case "${UNAME}" in
+arm64*)
+	SHDC_ARCH="_arm64" ;;
 esac
 
 sokol-shdc/$SHDC_PLATFORM$SHDC_ARCH/sokol-shdc -i source/shader.glsl -o source/shader.odin -l glsl300es:hlsl4:glsl430 -f sokol_odin
