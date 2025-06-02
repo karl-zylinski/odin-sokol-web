@@ -30,7 +30,7 @@ export EMSDK_QUIET=1
 
 # This builds our game code, note that it uses obj build mode: No linking
 # happens. The required libs to link are fed into `emcc` below.
-odin build source -target:js_wasm32 -build-mode:obj -vet -strict-style -out:$OUT_DIR/game -debug
+odin build source -target:js_wasm32 -build-mode:obj -vet -strict-style -out:$OUT_DIR/game.wasm.o -debug
 
 ODIN_PATH=$(odin root)
 

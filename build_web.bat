@@ -15,7 +15,7 @@ call %EMSCRIPTEN_SDK_DIR%\emsdk_env.bat
 
 :: This builds our game code, note that it uses obj build mode: No linking
 :: happens. The required libs to link are fed into `emcc` below.
-odin build source -target:js_wasm32 -build-mode:obj -vet -strict-style -out:%OUT_DIR%\game -debug
+odin build source -target:js_wasm32 -build-mode:obj -vet -strict-style -out:%OUT_DIR%\game.wasm.o -debug
 IF %ERRORLEVEL% NEQ 0 exit /b 1
 
 for /f %%i in ('odin root') do set "ODIN_PATH=%%i"
