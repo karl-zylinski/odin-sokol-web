@@ -125,13 +125,13 @@ init :: proc "c" () {
 		22, 21, 20,  23, 22, 20,
 	}
 	state.bind.index_buffer = sg.make_buffer({
-		type = .INDEXBUFFER,
+		usage = { index_buffer = true },
 		data = { ptr = &indices, size = size_of(indices) },
 	})
 
 	if img_data, img_data_ok := read_entire_file("assets/round_cat.png", context.temp_allocator); img_data_ok {
 		if img, img_err := png.load_from_bytes(img_data, allocator = context.temp_allocator); img_err == nil {
-			state.bind.images[IMG_tex] = sg.make_image({
+			sg_img := sg.make_image({
 				width = i32(img.width),
 				height = i32(img.height),
 				data = {
@@ -141,6 +141,10 @@ init :: proc "c" () {
 						},
 					},
 				},
+			})
+
+			state.bind.views[VIEW_tex] = sg.make_view({
+				texture = sg.Texture_View_Desc({image = sg_img}),
 			})
 		} else {
 			log.error(img_err)

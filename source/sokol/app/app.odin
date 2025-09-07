@@ -31,7 +31,8 @@ package sokol_app
         SOKOL_ASSERT(c)             - your own assert macro (default: assert(c))
         SOKOL_UNREACHABLE()         - a guard macro for unreachable code (default: assert(false))
         SOKOL_WIN32_FORCE_MAIN      - define this on Win32 to add a main() entry point
-        SOKOL_WIN32_FORCE_WINMAIN   - define this on Win32 to add a WinMain() entry point (enabled by default unless SOKOL_WIN32_FORCE_MAIN or SOKOL_NO_ENTRY is defined)
+        SOKOL_WIN32_FORCE_WINMAIN   - define this on Win32 to add a WinMain() entry point (enabled by default unless
+                                      SOKOL_WIN32_FORCE_MAIN or SOKOL_NO_ENTRY is defined)
         SOKOL_NO_ENTRY              - define this if sokol_app.h shouldn't "hijack" the main() function
         SOKOL_APP_API_DECL          - public function declaration prefix (default: extern)
         SOKOL_API_DECL              - same as SOKOL_APP_API_DECL
@@ -83,6 +84,11 @@ package sokol_app
 
     On macOS and iOS, the implementation must be compiled as Objective-C.
 
+    On Emscripten:
+        - for WebGL2: add the linker option `-s USE_WEBGL2=1`
+        - for WebGPU: compile and link with `--use-port=emdawnwebgpu`
+          (for more exotic situations, read: https://dawn.googlesource.com/dawn/+/refs/heads/main/src/emdawnwebgpu/pkg/README.md)
+
     FEATURE OVERVIEW
     ================
     sokol_app.h provides a minimalistic cross-platform API which
@@ -128,7 +134,7 @@ package sokol_app
     IME                 | TODO    | TODO? | TODO  | ???   | TODO    |  ???
     key repeat flag     | YES     | YES   | YES   | ---   | ---     |  YES
     windowed            | YES     | YES   | YES   | ---   | ---     |  YES
-    fullscreen          | YES     | YES   | YES   | YES   | YES     |  ---
+    fullscreen          | YES     | YES   | YES   | YES   | YES     |  YES(3)
     mouse hide          | YES     | YES   | YES   | ---   | ---     |  YES
     mouse lock          | YES     | YES   | YES   | ---   | ---     |  YES
     set cursor type     | YES     | YES   | YES   | ---   | ---     |  YES
@@ -142,6 +148,7 @@ package sokol_app
 
     (1) macOS has no regular window icons, instead the dock icon is changed
     (2) supported with EGL only (not GLX)
+    (3) fullscreen in the browser not supported on iphones
 
     STEP BY STEP
     ============
@@ -311,6 +318,16 @@ package sokol_app
             HWND has been cast to a void pointer in order to be tunneled
             through code which doesn't include Windows.h.
 
+        const void* sapp_x11_get_window(void)
+            On Linux, get the X11 Window, otherwise a null pointer. The
+            Window has been cast to a void pointer in order to be tunneled
+            through code which doesn't include X11/Xlib.h.
+
+        const void* sapp_x11_get_display(void)
+            On Linux, get the X11 Display, otherwise a null pointer. The
+            Display has been cast to a void pointer in order to be tunneled
+            through code which doesn't include X11/Xlib.h.
+
         const void* sapp_wgpu_get_device(void)
         const void* sapp_wgpu_get_render_view(void)
         const void* sapp_wgpu_get_resolve_view(void)
@@ -325,8 +342,9 @@ package sokol_app
 
         int sapp_gl_get_major_version(void)
         int sapp_gl_get_minor_version(void)
-            Returns the major and minor version of the GL context
-            (only for SOKOL_GLCORE, all other backends return zero here, including SOKOL_GLES3)
+        bool sapp_gl_is_gles(void)
+            Returns the major and minor version of the GL context and
+            whether the GL context is a GLES context
 
         const void* sapp_android_get_native_activity(void);
             On Android, get the native activity ANativeActivity pointer, otherwise
@@ -433,14 +451,15 @@ package sokol_app
 
         if (sapp_mouse_locked()) { ... }
 
-    On native platforms, the sapp_lock_mouse() and sapp_mouse_locked()
-    functions work as expected (mouse lock is activated or deactivated
-    immediately when sapp_lock_mouse() is called, and sapp_mouse_locked()
-    also immediately returns the new state after sapp_lock_mouse()
-    is called.
+    Note that mouse-lock state may not change immediately after sapp_lock_mouse(true/false)
+    is called, instead on some platforms the actual state switch may be delayed
+    to the end of the current frame or even to a later frame.
 
-    On the web platform, sapp_lock_mouse() and sapp_mouse_locked() behave
-    differently, as dictated by the limitations of the HTML5 Pointer Lock API:
+    The mouse may also be unlocked automatically without calling sapp_lock_mouse(false),
+    most notably when the application window becomes inactive.
+
+    On the web platform there are further restrictions to be aware of, caused
+    by the limitations of the HTML5 Pointer Lock API:
 
         - sapp_lock_mouse(true) can be called at any time, but it will
           only take effect in a 'short-lived input event handler of a specific
@@ -490,6 +509,13 @@ package sokol_app
                 default:
                     break;
             }
+        }
+
+    For a 'first person shooter mouse' the following code inside the sokol-app event handler
+    is recommended somewhere in your frame callback:
+
+        if (!sapp_mouse_locked()) {
+            sapp_lock_mouse(true);
         }
 
     CLIPBOARD SUPPORT
@@ -662,8 +688,7 @@ package sokol_app
                 const size_t num_bytes = response->data.size;
                 // and the pointer to the data (same as 'buf' in the fetch-call):
                 const void* ptr = response->data.ptr;
-            }
-            else {
+            } else {
                 // on error check the error code:
                 switch (response->error_code) {
                     case SAPP_HTML5_FETCH_ERROR_BUFFER_TOO_SMALL:
@@ -839,6 +864,15 @@ package sokol_app
 
     To check if the application window is currently in fullscreen mode,
     call sapp_is_fullscreen().
+
+    On the web, sapp_desc.fullscreen will have no effect, and the application
+    will always start in non-fullscreen mode. Call sapp_toggle_fullscreen()
+    from within or 'near' an input event to switch to fullscreen programatically.
+    Note that on the web, the fullscreen state may change back to windowed at
+    any time (either because the browser had rejected switching into fullscreen,
+    or the user leaves fullscreen via Esc), this means that the result
+    of sapp_is_fullscreen() may change also without calling sapp_toggle_fullscreen()!
+
 
     WINDOW ICON SUPPORT
     ===================
@@ -1383,6 +1417,10 @@ foreign sokol_app_clib {
     set_mouse_cursor :: proc(cursor: Mouse_Cursor)  ---
     // get current mouse cursor type
     get_mouse_cursor :: proc() -> Mouse_Cursor ---
+    // associate a custom mouse cursor image to a sapp_mouse_cursor enum entry
+    bind_mouse_cursor_image :: proc(cursor: Mouse_Cursor, #by_ptr desc: Image_Desc) -> Mouse_Cursor ---
+    // restore the sapp_mouse_cursor enum entry to it's default system appearance
+    unbind_mouse_cursor_image :: proc(cursor: Mouse_Cursor)  ---
     // return the userdata pointer optionally provided in sapp_desc
     userdata :: proc() -> rawptr ---
     // return a copy of the sapp_desc structure
@@ -1459,10 +1497,16 @@ foreign sokol_app_clib {
     wgpu_get_depth_stencil_view :: proc() -> rawptr ---
     // GL: get framebuffer object
     gl_get_framebuffer :: proc() -> u32 ---
-    // GL: get major version (only valid for desktop GL)
+    // GL: get major version
     gl_get_major_version :: proc() -> c.int ---
-    // GL: get minor version (only valid for desktop GL)
+    // GL: get minor version
     gl_get_minor_version :: proc() -> c.int ---
+    // GL: return true if the context is GLES
+    gl_is_gles :: proc() -> bool ---
+    // X11: get Window
+    x11_get_window :: proc() -> rawptr ---
+    // X11: get Display
+    x11_get_display :: proc() -> rawptr ---
     // Android: get native activity handle
     android_get_native_activity :: proc() -> rawptr ---
 }
@@ -1744,16 +1788,18 @@ Range :: struct {
 /*
     sapp_image_desc
 
-    This is used to describe image data to sokol_app.h (at first, window
-    icons, later maybe cursor images).
+    This is used to describe image data to sokol_app.h (window icons and cursor images).
 
-    Note that the actual image pixel format depends on the use case:
+    The pixel format is RGBA8.
 
-    - window icon pixels are RGBA8
+    cursor_hotspot_x and _y are used only for cursors, to define which pixel
+    of the image should be aligned with the mouse position.
 */
 Image_Desc :: struct {
     width : c.int,
     height : c.int,
+    cursor_hotspot_x : c.int,
+    cursor_hotspot_y : c.int,
     pixels : Range,
 }
 
@@ -1821,6 +1867,7 @@ Log_Item :: enum i32 {
     WIN32_REGISTER_RAW_INPUT_DEVICES_FAILED_MOUSE_LOCK,
     WIN32_REGISTER_RAW_INPUT_DEVICES_FAILED_MOUSE_UNLOCK,
     WIN32_GET_RAW_INPUT_DATA_FAILED,
+    WIN32_DESTROYICON_FOR_CURSOR_FAILED,
     LINUX_GLX_LOAD_LIBGL_FAILED,
     LINUX_GLX_LOAD_ENTRY_POINTS_FAILED,
     LINUX_GLX_EXTENSION_NOT_FOUND,
@@ -1880,11 +1927,12 @@ Log_Item :: enum i32 {
     ANDROID_CREATE_THREAD_PIPE_FAILED,
     ANDROID_NATIVE_ACTIVITY_CREATE_SUCCESS,
     WGPU_SWAPCHAIN_CREATE_SURFACE_FAILED,
-    WGPU_SWAPCHAIN_CREATE_SWAPCHAIN_FAILED,
+    WGPU_SWAPCHAIN_SURFACE_GET_CAPABILITIES_FAILED,
     WGPU_SWAPCHAIN_CREATE_DEPTH_STENCIL_TEXTURE_FAILED,
     WGPU_SWAPCHAIN_CREATE_DEPTH_STENCIL_VIEW_FAILED,
     WGPU_SWAPCHAIN_CREATE_MSAA_TEXTURE_FAILED,
     WGPU_SWAPCHAIN_CREATE_MSAA_VIEW_FAILED,
+    WGPU_SWAPCHAIN_GETCURRENTTEXTURE_FAILED,
     WGPU_REQUEST_DEVICE_STATUS_ERROR,
     WGPU_REQUEST_DEVICE_STATUS_UNKNOWN,
     WGPU_REQUEST_ADAPTER_STATUS_UNAVAILABLE,
@@ -2004,5 +2052,21 @@ Mouse_Cursor :: enum i32 {
     RESIZE_NESW,
     RESIZE_ALL,
     NOT_ALLOWED,
+    CUSTOM_0,
+    CUSTOM_1,
+    CUSTOM_2,
+    CUSTOM_3,
+    CUSTOM_4,
+    CUSTOM_5,
+    CUSTOM_6,
+    CUSTOM_7,
+    CUSTOM_8,
+    CUSTOM_9,
+    CUSTOM_10,
+    CUSTOM_11,
+    CUSTOM_12,
+    CUSTOM_13,
+    CUSTOM_14,
+    CUSTOM_15,
 }
 
