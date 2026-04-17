@@ -1,7 +1,5 @@
 > [!WARNING]
-> This repository is looking for a new maintainer. Do you want to do it? Send me an email: karl@zylinski.se or poke me on Discord: https://discord.gg/4FsHgtBmFK
-> 
-> Also, since the [hot reload repository](https://github.com/karl-zylinski/odin-sokol-hot-reload-template) also does web build, perhaps we should combine the two? I have these two separate repos because this one shows the "basic technique" of the web build without all the other noise. But perhaps its too much to maintain.
+> This repository has been archived. However, the [odin-sokol-hot-reload-template](https://github.com/karl-zylinski/odin-sokol-hot-reload-template) also does web builds.
 
 # Odin + Sokol on the web
 
